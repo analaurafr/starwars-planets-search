@@ -3,13 +3,13 @@ export type Planet = {
   rotation_period: string;
   orbital_period: string;
   diameter: string;
-  climate: string;
-  gravity: string;
-  terrain: string;
-  surface_water: string;
-  population: string;
-  residents: string[]; // ou um array de URLs, dependendo do uso
-  films: string[]; // ou um array de URLs, dependendo do uso
+  climate: string | string[];
+  gravity: string | string[];
+  terrain: string | string[];
+  surface_water: string | string[];
+  population: string | string[];
+  residents?: string[] | string[];
+  films: string[] | string[];
   created: string;
   edited: string;
   url: string;

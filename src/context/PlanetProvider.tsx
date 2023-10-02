@@ -6,13 +6,13 @@ type Planet = {
   rotation_period: string;
   orbital_period: string;
   diameter: string;
-  climate: string;
-  gravity: string;
-  terrain: string;
-  surface_water: string;
-  population: string;
-  residents: string[];
-  films: string[];
+  climate: string | string[];
+  gravity: string | string[];
+  terrain: string | string[];
+  surface_water: string | string[];
+  population: string | string[];
+  residents?: string[] | string[];
+  films: string[] | string[];
   created: string;
   edited: string;
   url: string;
@@ -38,7 +38,14 @@ function PlanetProvider({ children }: PlanetProviderProps) {
       try {
         const response = await fetch('https://swapi.dev/api/planets');
         const data: PlanetsResponse = await response.json();
-        setPlanets(data.results);
+
+        // Remover a coluna "residents" de cada planeta
+        const planetsWithoutResidents = data.results.map((planet) => {
+          const { residents, ...planetWithoutResidents } = planet;
+          return planetWithoutResidents;
+        });
+
+        setPlanets(planetsWithoutResidents);
       } catch (error) {
         console.error('Erro ao buscar planetas:', error);
       }

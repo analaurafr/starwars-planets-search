@@ -1,13 +1,12 @@
 import React from 'react';
 import Table from './components/Table';
-import TextFilter from './components/TextFilter';
 import PlanetProvider from './context/PlanetProvider';
 
 function App() {
   return (
     <PlanetProvider>
       <div>
-        <TextFilter />
+        <h1>Starwars Planets</h1>
         <Table />
       </div>
     </PlanetProvider>
