@@ -1,40 +1,30 @@
-// PlanetContext.js
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, Context } from 'react';
 
-const PlanetContext = createContext();
+type Planet = {
+  name: string;
+  rotation_period: string;
+  orbital_period: string;
+  diameter: string;
+  climate: string;
+  gravity: string;
+  terrain: string;
+  surface_water: string;
+  population: string;
+  residents: string[];
+  films: string[];
+  created: string;
+  edited: string;
+  url: string;
+};
 
-export function PlanetProvider({ children }) {
-  const [planets, setPlanets] = useState([]);
+type PlanetContextType = {
+  planets: Planet[];
+  setFilter: (filter: string) => void;
+};
 
-  useEffect(() => {
-    // Fazer a requisição para a API e atualizar o estado "planets" com os dados
-    async function fetchPlanets() {
-      try {
-        const response = await fetch('https://swapi.dev/api/planets');
-        const data = await response.json();
-        // Remover a coluna "residents" de cada planeta
-        const planetsWithoutResidents = data.results.map((planet) => {
-          const { residents, ...rest } = planet;
-          return rest;
-        });
-        setPlanets(planetsWithoutResidents);
-      } catch (error) {
-        console.error('Erro ao buscar os planetas:', error);
-      }
-    }
+const PlanetContext: Context<PlanetContextType> = createContext<PlanetContextType>({
+  planets: [],
+  setFilter: () => {},
+});
 
-    fetchPlanets();
-  }, []);
-
-  return (
-    <PlanetContext.Provider value={ planets }>{children}</PlanetContext.Provider>
-  );
-}
-
-export function usePlanets() {
-  const context = useContext(PlanetContext);
-  if (!context) {
-    throw new Error('usePlanets deve ser usado dentro de um PlanetProvider');
-  }
-  return context;
-}
+export default PlanetContext;

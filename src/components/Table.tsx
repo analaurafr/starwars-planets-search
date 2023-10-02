@@ -1,49 +1,34 @@
-// Table
-import React from 'react';
-import { usePlanets } from '../context/PlanetContext';
+import React, { useContext } from 'react';
+import PlanetContext from '../context/PlanetContext';
 
-function Table({ filterText }) {
-  const planets = usePlanets();
+function Table() {
+  const { planets } = useContext(PlanetContext);
 
-  const filteredPlanets = planets.filter(
-    (planet) => planet.name.toLowerCase().includes(filterText.toLowerCase()),
-  );
+  if (planets.length === 0) {
+    return <div>Carregando...</div>;
+  }
+
+  // Obtém as colunas do primeiro planeta como referência
+  const columns = Object.keys(planets[0]);
+
+  // Remove a coluna 'residents' das colunas exibidas
+  const filteredColumns = columns.filter((col) => col !== 'residents');
 
   return (
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Rotation Period</th>
-          <th>Orbital Period</th>
-          <th>Diameter</th>
-          <th>Climate</th>
-          <th>Gravity</th>
-          <th>Terrain</th>
-          <th>Surface Water</th>
-          <th>Population</th>
-          <th>Films</th>
-          <th>Created</th>
-          <th>Edited</th>
-          <th>URL</th>
+          {filteredColumns.map((col) => (
+            <th key={ col }>{col}</th>
+          ))}
         </tr>
       </thead>
       <tbody>
-        {filteredPlanets.map((planet, index) => (
-          <tr key={ index }>
-            <td>{planet.name}</td>
-            <td>{planet.rotation_period}</td>
-            <td>{planet.orbital_period}</td>
-            <td>{planet.diameter}</td>
-            <td>{planet.climate}</td>
-            <td>{planet.gravity}</td>
-            <td>{planet.terrain}</td>
-            <td>{planet.surface_water}</td>
-            <td>{planet.population}</td>
-            <td>{planet.films.join(', ')}</td>
-            <td>{planet.created}</td>
-            <td>{planet.edited}</td>
-            <td>{planet.url}</td>
+        {planets.map((planet) => (
+          <tr key={ planet.name }>
+            {filteredColumns.map((col) => (
+              <td key={ col }>{planet[col as keyof typeof planet]}</td>
+            ))}
           </tr>
         ))}
       </tbody>
