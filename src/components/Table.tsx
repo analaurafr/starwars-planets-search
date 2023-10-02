@@ -2,8 +2,12 @@
 import React from 'react';
 import { usePlanets } from '../context/PlanetContext';
 
-function Table() {
+function Table({ filterText }) {
   const planets = usePlanets();
+
+  const filteredPlanets = planets.filter(
+    (planet) => planet.name.toLowerCase().includes(filterText.toLowerCase()),
+  );
 
   return (
     <table>
@@ -25,7 +29,7 @@ function Table() {
         </tr>
       </thead>
       <tbody>
-        {planets.map((planet, index) => (
+        {filteredPlanets.map((planet, index) => (
           <tr key={ index }>
             <td>{planet.name}</td>
             <td>{planet.rotation_period}</td>
