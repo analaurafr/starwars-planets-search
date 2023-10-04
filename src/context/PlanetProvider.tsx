@@ -1,68 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import PlanetContext from './PlanetContext';
+import { useState } from 'react';
+import { getFetch } from '../utils/requestAPI';
+import { PlanetsType } from '../utils/types';
+import PlanetsContext from './PlanetContext';
 
-type Planet = {
-  name: string;
-  rotation_period: string;
-  orbital_period: string;
-  diameter: string;
-  climate: string | string[];
-  gravity: string | string[];
-  terrain: string | string[];
-  surface_water: string | string[];
-  population: string | string[];
-  residents?: string[] | string[];
-  films: string[] | string[];
-  created: string;
-  edited: string;
-  url: string;
+type PlanetsProviderProps = {
+  children: React.ReactNode,
 };
 
-type PlanetsResponse = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Planet[];
-};
+function PlanetsProvider({ children }: PlanetsProviderProps) {
+  const [planetData, setPlanetData] = useState<PlanetsType[]>([]);
+  const [planetFilter, setPlanetFilter] = useState<PlanetsType[]>([]);
+  const [tableHead, setTableHead] = useState<string[]>([]);
 
-type PlanetProviderProps = {
-  children: React.ReactNode;
-};
-
-function PlanetProvider({ children }: PlanetProviderProps) {
-  const [planets, setPlanets] = useState<Planet[]>([]);
-  const [filter, setFilter] = useState<string>('');
-
-  useEffect(() => {
-    async function fetchPlanets() {
-      try {
-        const response = await fetch('https://swapi.dev/api/planets');
-        const data: PlanetsResponse = await response.json();
-
-        // Remover a coluna "residents" de cada planeta
-        const planetsWithoutResidents = data.results.map((planet) => {
-          const { residents, ...planetWithoutResidents } = planet;
-          return planetWithoutResidents;
-        });
-
-        setPlanets(planetsWithoutResidents);
-      } catch (error) {
-        console.error('Erro ao buscar planetas:', error);
-      }
-    }
-
-    fetchPlanets();
-  }, []);
-
-  const filteredPlanets = planets.filter(
-    (planet) => planet.name.toLowerCase().includes(filter.toLowerCase()),
-  );
+  const contextAPI = async () => {
+    const response = await getFetch();
+    setPlanetData(response);
+    setPlanetFilter(planetData);
+    setTableHead(Object.keys(response[0]));
+  };
 
   return (
-    <PlanetContext.Provider value={ { planets: filteredPlanets, setFilter } }>
+    <PlanetsContext.Provider
+      value={ {
+        tableHead,
+        planetData,
+        setPlanetData,
+        planetFilter,
+        setPlanetFilter,
+        contextAPI,
+      } }
+    >
       {children}
-    </PlanetContext.Provider>
+    </PlanetsContext.Provider>
   );
 }
 
-export default PlanetProvider;
+export default PlanetsProvider;

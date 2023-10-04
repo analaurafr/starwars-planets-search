@@ -1,30 +1,6 @@
-import { createContext, Context } from 'react';
+import { createContext } from 'react';
+import { ContextType } from '../utils/types';
 
-type Planet = {
-  name: string;
-  rotation_period: string;
-  orbital_period: string;
-  diameter: string;
-  climate: string;
-  gravity: string;
-  terrain: string;
-  surface_water: string;
-  population: string;
-  residents: string[];
-  films: string[];
-  created: string;
-  edited: string;
-  url: string;
-};
+const PlanetsContext = createContext<ContextType>({} as ContextType);
 
-type PlanetContextType = {
-  planets: Planet[];
-  setFilter: (filter: string) => void;
-};
-
-const PlanetContext: Context<PlanetContextType> = createContext<PlanetContextType>({
-  planets: [],
-  setFilter: () => {},
-});
-
-export default PlanetContext;
+export default PlanetsContext;
