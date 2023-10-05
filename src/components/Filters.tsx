@@ -1,109 +1,153 @@
-// Filters.js
-import React, { useContext, useState } from 'react';
-import PlanetsContext from '../context/PlanetContext';
+import useFilters from '../hooks/hook';
 
 function Filters() {
-  const [filters, setFilters] = useState([]); // Lista de filtros
-  const [columnForFiltering, setColumnForFiltering] = useState('population');
-  const [comparisonForFiltering, setComparisonForFiltering] = useState('maior que');
-  const [numberForFiltering, setNumberForFiltering] = useState('0');
-  const { planetFilter, setPlanetFilter } = useContext(PlanetsContext);
+  // Utiliza o hook personalizado `useFilters` para obter funções e estados relacionados aos filtros e ordenação.
+  const {
+    filterByName,
+    handleChange,
+    filterInfoNumber,
+    pilarOptions,
+    filterOptions,
+    deleteFilter,
+    pilarFilter,
+    takeOrder,
+    orderPlanets,
+  } = useFilters();
 
-  const availableColumns = [
-    'population',
-    'orbital_period',
-    'diameter',
-    'rotation_period',
-    'surface_water',
-  ].filter((col) => !filters.some((filter) => filter.column === col));
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    addFilter();
-  };
-
-  const addFilter = () => {
-    const newFilter = {
-      column: columnForFiltering,
-      comparison: comparisonForFiltering,
-      value: numberForFiltering,
-    };
-    setFilters([...filters, newFilter]);
-    applyFilters([...filters, newFilter]);
-  };
-
-  const removeFilter = (column) => {
-    const updatedFilters = filters.filter((filter) => filter.column !== column);
-    setFilters(updatedFilters);
-    applyFilters(updatedFilters);
-  };
-
-  const applyFilters = (filterList) => {
-    let filteredPlanets = [...planetFilter];
-    filterList.forEach((filter) => {
-      filteredPlanets = filteredPlanets.filter((planet) => {
-        if (filter.comparison === 'maior que') {
-          return Number(planet[filter.column]) > Number(filter.value);
-        }
-        if (filter.comparison === 'menor que') {
-          return Number(planet[filter.column]) < Number(filter.value);
-        }
-        if (filter.comparison === 'igual a') {
-          return Number(planet[filter.column]) === Number(filter.value);
-        }
-        return planet;
-      });
-    });
-    setPlanetFilter(filteredPlanets);
-  };
+  // Opções para o filtro de comparação.
+  const likenFilter = ['maior que', 'menor que', 'igual a'];
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <select
-          data-testid="column-filter"
-          name="column"
-          value={columnForFiltering}
-          onChange={(event) => setColumnForFiltering(event.target.value)}
+      <form>
+        <label htmlFor="filterByName">
+          Name:
+          <input
+            type="text"
+            id="filterByName"
+            data-testid="name-filter"
+            onChange={ (event) => filterByName(event.target.value) }
+          />
+        </label>
+
+        <div>
+          <select
+            name="column"
+            data-testid="column-filter"
+            onChange={ (event) => handleChange(event) }
+          >
+            {/* Mapeia as opções disponíveis para a coluna de filtro */}
+            {pilarOptions.map((columnValue: any, index: any) => (
+              <option key={ index } value={ columnValue }>
+                {columnValue}
+              </option>
+            ))}
+          </select>
+
+          <select
+            name="comparison"
+            data-testid="comparison-filter"
+            onChange={ (event) => handleChange(event) }
+          >
+            {/* Mapeia as opções para o tipo de comparação */}
+            {likenFilter.map((comparison, index) => (
+              <option key={ index } value={ comparison }>
+                {comparison}
+              </option>
+            ))}
+          </select>
+
+          <input
+            name="value"
+            type="number"
+            defaultValue={ 0 }
+            data-testid="value-filter"
+            onChange={ (event) => handleChange(event) }
+          />
+          <button
+            type="button"
+            data-testid="button-filter"
+            onClick={ filterInfoNumber }
+          >
+            Filtrar
+          </button>
+        </div>
+
+        <div>
+          <select
+            name="columnSort"
+            data-testid="column-sort"
+            onChange={ (event) => takeOrder(event) }
+          >
+            {/* Mapeia as opções para a coluna de ordenação */}
+            {pilarFilter.map((columnValue: any, index: any) => (
+              <option key={ index } value={ columnValue }>
+                {columnValue}
+              </option>
+            ))}
+          </select>
+
+          <label htmlFor="ASCinput">
+            Ascendente
+            <input
+              onChange={ (event) => takeOrder(event) }
+              type="radio"
+              value="ASC"
+              name="columnSortOrder"
+              data-testid="column-sort-input-asc"
+              id="ASCinput"
+            />
+          </label>
+
+          <label htmlFor="DESCinput">
+            Descendente
+            <input
+              onChange={ (event) => takeOrder(event) }
+              type="radio"
+              value="DESC"
+              name="columnSortOrder"
+              data-testid="column-sort-input-desc"
+              id="DESCinput"
+            />
+          </label>
+
+          <button
+            type="button"
+            data-testid="column-sort-button"
+            onClick={ orderPlanets }
+          >
+            Ordenar
+          </button>
+        </div>
+
+        <button
+          name="removeFilters"
+          type="button"
+          data-testid="button-remove-filters"
+          onClick={ (event) => deleteFilter(event) }
         >
-          {availableColumns.map((col) => (
-            <option key={col} value={col}>
-              {col}
-            </option>
-          ))}
-        </select>
-        <select
-          data-testid="comparison-filter"
-          name="comparison"
-          value={comparisonForFiltering}
-          onChange={(event) => setComparisonForFiltering(event.target.value)}
-        >
-          <option value="maior que">maior que</option>
-          <option value="menor que">menor que</option>
-          <option value="igual a">igual a</option>
-        </select>
-        <input
-          type="number"
-          data-testid="value-filter"
-          name="number"
-          value={numberForFiltering}
-          onChange={(event) => setNumberForFiltering(event.target.value)}
-        />
-        <button data-testid="button-filter">Filtrar</button>
+          Remover Filtros
+        </button>
       </form>
-      <div>
-        {filters.map((filter, index) => (
-          <div key={index}>
-            <span>
-              {filter.column} {filter.comparison} {filter.value}
-            </span>
-            <button onClick={() => removeFilter(filter.column)}>Remover</button>
-          </div>
-        ))}
-      </div>
+
+      {filterOptions.length > 0 && (
+        <ul>
+          {/* Mapeia e exibe os filtros ativos */}
+          {filterOptions.map((filter: any, index: any) => (
+            <li key={ index } data-testid="filter">
+              {`${filter.column} ${filter.comparison} ${filter.value}`}
+              <button
+                name="X"
+                onClick={ (event) => deleteFilter(event, filter.column) }
+              >
+                X
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
 export default Filters;
-

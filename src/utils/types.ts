@@ -1,35 +1,39 @@
-export type PlanetsTypes = {
-  filter: any;
-  name: string,
-  rotation_period: string,
-  orbital_period: string,
-  diameter: string,
-  climate: string,
-  gravity: string,
-  terrain: string,
-  surface_water: string,
-  population: string,
-  films: string[],
-  created: string,
-  edited: string,
-  url: string,
-};
-
 export type PlanetsType = {
-  [key:string]: string | string[],
+  name: string;
+  rotation_period: string;
+  orbital_period: string;
+  diameter: string;
+  climate: string;
+  gravity: string;
+  terrain: string;
+  surface_water: string;
+  population: string;
+  films: string[];
+  created: string;
+  edited: string;
+  url: string;
 };
 
-export type Filters = {
-  column: string,
-  comparison: string,
-  number: string,
+export type ColumnType = {
+  column: 'population' | 'orbital_period' | 'diameter'
+  | 'rotation_period' | 'surface_water';
+  comparison: 'maior que' | 'menor que' | 'igual a';
+  value: number;
 };
 
-export type ContextType = {
-  contextAPI: () => Promise<void>,
-  planetData: PlanetsTypes,
-  planetFilter: PlanetsType[],
-  tableHead: string[];
-  setPlanetData: (planets: PlanetsType[]) => void;
-  setPlanetFilter: (planets: PlanetsType[]) => void;
+export type OrderType = {
+  order: {
+    column: 'population' | 'orbital_period' | 'diameter'
+    | 'rotation_period' | 'surface_water';
+    sort: 'ASC' | 'DESC';
+  }
+};
+
+export type NumbersType = PlanetsType & { residents: string[] };
+
+export type PlanetsContextType = {
+  planets: PlanetsType[];
+  carry: boolean;
+  filterPlanets: PlanetsType[];
+  setFilterPlanets: (planets: PlanetsType[]) => void;
 };

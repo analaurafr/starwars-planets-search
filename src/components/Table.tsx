@@ -1,74 +1,53 @@
-// Table.js
-import React, { useContext, useState, useEffect } from 'react';
-import PlanetsContext from '../context/PlanetContext';
-import Filters from './Filters';
+import { useContext } from 'react';
+import GlobalContext from '../context/PlanetContext';
 
 function Table() {
-  const {
-    tableHead,
-    contextAPI,
-    planetData,
-    planetFilter,
-    setPlanetFilter,
-  } = useContext(PlanetsContext);
+  // Obtém os dados do contexto global, incluindo a lista de planetas, estado de carregamento e planetas filtrados.
+  const { planets, carry, filterPlanets } = useContext(GlobalContext);
 
-  const [searchedValue, setSearchedValue] = useState('');
+  // array com os nomes das colunas da tabela com base nos dados do primeiro planeta.
+  const arrayPlanet = planets?.length > 0 ? Object.keys(planets[0]) : [];
 
-  const textFilter = () => {
-    setPlanetFilter(
-      planetData.filter((planet) => planet.name.toLowerCase().includes(searchedValue)),
-    );
-  };
+  // Decide qual lista de planetas deve ser renderizada, a filtrada ou a completa.
+  const listRender = filterPlanets?.length > 0 ? filterPlanets : planets;
 
-  useEffect(() => {
-    contextAPI();
-  }, []);
-
-  useEffect(() => {
-    textFilter();
-  }, [searchedValue, planetData]);
+  // array com os nomes dos planetas a serem renderizados.
+  const mapPlanets = listRender?.map((planet) => planet.name);
 
   return (
-    <>
-      <input
-        type="text"
-        name="name"
-        value={ searchedValue }
-        onChange={ (event) => setSearchedValue(event.target.value) }
-        data-testid="name-filter"
-      />
-      <Filters />
-      <table>
-        <thead>
-          <tr>
-            {tableHead.map((item) => (
-              <th key={ item } scope="col">
-                {item}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {planetFilter.map((planet) => (
-            <tr key={ planet.name }>
-              <td>{planet.name}</td>
-              <td>{planet.rotation_period}</td>
-              <td>{planet.orbital_period}</td>
-              <td>{planet.diameter}</td>
-              <td>{planet.climate}</td>
-              <td>{planet.gravity}</td>
-              <td>{planet.terrain}</td>
-              <td>{planet.surface_water}</td>
-              <td>{planet.population}</td>
-              <td>{planet.films}</td>
-              <td>{planet.created}</td>
-              <td>{planet.edited}</td>
-              <td>{planet.url}</td>
+    <div>
+      {carry && <p>Carregando...</p>}
+      {' '}
+      {/* Exibe "Carregando..." quando o estado de carregamento é verdadeiro */}
+      {listRender && (
+        <table>
+          <thead>
+            <tr>
+              {/* Renderiza as colunas da tabela com base no array de nomes das colunas */}
+              {arrayPlanet.map((header, index) => (
+                <th key={ index }>{header}</th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
+          </thead>
+          <tbody>
+            {listRender.map((planet, index) => (
+              <tr key={ index }>
+                {/* Renderiza as células da tabela com base nos valores dos planetas */}
+                {Object.values(planet).map((value, indexPlanet) => (
+                  <td
+                    data-testid={ mapPlanets
+                      .includes(value as string) ? 'planet-name' : '' }
+                    key={ indexPlanet }
+                  >
+                    {value}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
   );
 }
 
