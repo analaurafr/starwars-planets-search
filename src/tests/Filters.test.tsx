@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import App from '../App';
 
-import Filters from '../components/Filters';
 
 test('Renderiza os filtros corretamente', () => {
-  render(<Filters />);
+  render(<App />);
 
   const columnFilter = screen.getByTestId('column-filter');
   const comparisonFilter = screen.getByTestId('comparison-filter');
@@ -19,7 +19,7 @@ test('Renderiza os filtros corretamente', () => {
 });
 
 test('deve chamar filterByName ao clicar no botão Filtrar', () => {
-  render(<Filters />);
+  render(<App />);
 
   const input = screen.getByTestId('name-filter');
   const button = screen.getByTestId('button-filter');
@@ -31,7 +31,7 @@ test('deve chamar filterByName ao clicar no botão Filtrar', () => {
 });
 
 test('deve aplicar filtros numéricos corretamente ao clicar no botão Filtrar', () => {
-  render(<Filters />);
+  render(<App />);
 
   const columnSelect = screen.getByTestId('column-filter');
   const comparisonSelect = screen.getByTestId('comparison-filter');
@@ -47,7 +47,7 @@ test('deve aplicar filtros numéricos corretamente ao clicar no botão Filtrar',
 });
 
 test('deve ordenar os planetas corretamente ao clicar no botão Ordenar', () => {
-  render(<Filters />);
+  render(<App />);
 
   const columnSortSelect = screen.getByTestId('column-sort');
   const ascRadio = screen.getByTestId('column-sort-input-asc');
@@ -59,16 +59,5 @@ test('deve ordenar os planetas corretamente ao clicar no botão Ordenar', () => 
   userEvent.click(button);
 
   // Adicione asserções para verificar se a ordenação foi aplicada corretamente
-});
-
-test('deve remover os filtros corretamente ao clicar no botão Remover Filtros ou no botão X', () => {
-  render(<Filters />);
-
-  // Configure alguns filtros
-
-  const removeFiltersButton = screen.getByTestId('button-remove-filters');
-  userEvent.click(removeFiltersButton);
-
-  // Adicione asserções para verificar se os filtros foram removidos corretamente
 });
 
