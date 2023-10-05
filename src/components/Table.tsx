@@ -18,7 +18,7 @@ function Table() {
     <div>
       {carry && <p>Carregando...</p>}
       {' '}
-      {/* Exibe "Carregando..." quando o estado de carregamento é verdadeiro */}
+      {/* Exibe "Carregando.." quando o estado de carregamento é verdadeiro */}
       {listRender && (
         <table>
           <thead>
